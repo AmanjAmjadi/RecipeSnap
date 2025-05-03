@@ -21,10 +21,12 @@ export function ManualInput({ initialIngredients = [], onGenerateRecipes, isLoad
   const [newIngredient, setNewIngredient] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
-  // Update ingredients if initialIngredients prop changes (e.g., after photo analysis)
-  React.useEffect(() => {
-    setIngredients(initialIngredients);
-  }, [initialIngredients]);
+  // The useEffect below was removed as it caused an infinite loop.
+  // useState(initialIngredients) correctly initializes the state.
+  // If synchronization is needed later, use a more stable prop reference.
+  // React.useEffect(() => {
+  //   setIngredients(initialIngredients);
+  // }, [initialIngredients]);
 
 
   const handleAddIngredient = useCallback(() => {
