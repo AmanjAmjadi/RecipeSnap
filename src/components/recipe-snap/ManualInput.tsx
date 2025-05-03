@@ -21,12 +21,9 @@ export function ManualInput({ initialIngredients = [], onGenerateRecipes, isLoad
   const [newIngredient, setNewIngredient] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
-  // The useEffect below was removed as it caused an infinite loop.
-  // useState(initialIngredients) correctly initializes the state.
-  // If synchronization is needed later, use a more stable prop reference.
-  // React.useEffect(() => {
-  //   setIngredients(initialIngredients);
-  // }, [initialIngredients]);
+  // Initialize state correctly with the prop.
+  // If the prop needs to dynamically update the state later,
+  // a more robust solution (like using a key prop on ManualInput in the parent) might be needed.
 
 
   const handleAddIngredient = useCallback(() => {
@@ -50,6 +47,15 @@ export function ManualInput({ initialIngredients = [], onGenerateRecipes, isLoad
   const handleRemoveIngredient = useCallback((ingredientToRemove: string) => {
     setIngredients((prev) => prev.filter((ing) => ing !== ingredientToRemove));
   }, []);
+
+  // Stable handler for remove button clicks using data attribute
+  const handleRemoveClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+      const ingredientToRemove = event.currentTarget.dataset.ingredient;
+      if (ingredientToRemove) {
+          handleRemoveIngredient(ingredientToRemove);
+      }
+  }, [handleRemoveIngredient]); // Depends on the memoized handleRemoveIngredient
+
 
   const handleGenerateClick = () => {
     if (ingredients.length > 0) {
@@ -114,7 +120,8 @@ export function ManualInput({ initialIngredients = [], onGenerateRecipes, isLoad
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleRemoveIngredient(ingredient)}
+                    data-ingredient={ingredient} // Use data attribute
+                    onClick={handleRemoveClick} // Use stable handler
                     disabled={isLoading}
                     className="h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                   >
